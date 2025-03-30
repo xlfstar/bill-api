@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记账系统 API 文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        h2 {
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            color: #34495e;
+        }
+        h3 {
+            margin: 20px 0 10px;
+            color: #42b983;
+        }
+        .api-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .method {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .get { background: #61affe; color: white; }
+        .post { background: #49cc90; color: white; }
+        .put { background: #fca130; color: white; }
+        .delete { background: #f93e3e; color: white; }
+        .endpoint {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .description {
+            margin: 10px 0;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f5f5f5;
+        }
+        .nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .nav ul {
+            list-style: none;
+        }
+        .nav a {
+            color: #42b983;
+            text-decoration: none;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>记账系统 API 文档</h1>
+    
+    <nav class="nav">
+        <ul>
+            <li><a href="#user">用户接口</a></li>
+            <li><a href="#bill">账单接口</a></li>
+            <li><a href="#classify">分类接口</a></li>
+            <li><a href="#tag">标签接口</a></li>
+            <li><a href="#budget">预算接口</a></li>
+            <li><a href="#assets">资产接口</a></li>
+            <li><a href="#message">消息接口</a></li>
+            <li><a href="#upload">文件上传</a></li>
+            <li><a href="#admin">管理员接口</a></li>
+        </ul>
+    </nav>
+
+    <section id="user">
+        <h2>用户相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/users/register</span>
+            <div class="description">用户注册</div>
+            <pre>{
+  "nickname": "张三",
+  "sex": "1",         // 0-未知，1-男，2-女
+  "phonenumber": "13800138000",
+  "password": "123456"
+}</pre>
+        </div>
+
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/users/login</span>
+            <div class="description">用户登录</div>
+            <pre>{
+  "phonenumber": "13800138000",
+  "password": "123456"
+}</pre>
+        </div>
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/users</span>
+            <div class="description">获取用户列表（支持分页和模糊查询）</div>
+            <p>参数：</p>
+            <table>
+                <tr>
+                    <th>参数名</th>
+                    <th>说明</th>
+                    <th>示例</th>
+                    <th>是否必填</th>
+                </tr>
+                <tr>
+                    <td>page</td>
+                    <td>页码</td>
+                    <td>1</td>
+                    <td>否（默认1）</td>
+                </tr>
+                <tr>
+                    <td>pageSize</td>
+                    <td>每页条数</td>
+                    <td>10</td>
+                    <td>否（默认10）</td>
+                </tr>
+                <tr>
+                    <td>nickname</td>
+                    <td>用户昵称（模糊查询）</td>
+                    <td>张</td>
+                    <td>否</td>
+                </tr>
+                <tr>
+                    <td>phonenumber</td>
+                    <td>手机号（模糊查询）</td>
+                    <td>138</td>
+                    <td>否</td>
+                </tr>
+            </table>
+            <p>响应示例：</p>
+            <pre>{
+          "code": 200,
+          "success": true,
+          "data": {
+            "users": [
+              {
+                "id": 1,
+                "nickname": "张三",
+                "sex": "1",
+                "avatar": "http://example.com/avatar.jpg",
+                "status": 1,
+                "level": 1,
+                "phonenumber": "13800138000",
+                "createdAt": "2024-03-20T10:00:00.000Z",
+                "updatedAt": "2024-03-20T10:00:00.000Z"
+              }
+              // ... 更多用户
+            ],
+            "pagination": {
+              "total": 25,        // 总记录数
+              "current": 1,       // 当前页码
+              "pageSize": 10,     // 每页条数
+              "totalPages": 3     // 总页数
+            }
+          }
+        }</pre>
+        </div>
+        <div class="api-item">
+            <h3>Token 说明</h3>
+            <p>登录成功后，需要在后续请求中添加 token 到请求头：</p>
+            <pre>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</pre>
+            <p>token 有效期为 7 天</p>
+        </div>
+    </section>
+
+    <section id="bill">
+        <h2>账单相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/bills</span>
+            <div class="description">创建账单</div>
+            <pre>{
+  "type": "1",        // 1-支出，2-收入
+  "amount": 100.00,
+  "date": 1678900000000,
+  "classify_id": 1,
+  "user_id": 1,
+  "remark": "午餐",     // 可选
+  "tag_id": 1,         // 可选
+  "assets_id": 1,      // 可选
+  "images": [          // 可选
+    "http://example.com/image1.jpg"
+  ]
+}</pre>
+        </div>
+
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/bills/statistics</span>
+            <div class="description">获取时间范围内的账单统计</div>
+            <p>参数：</p>
+            <table>
+                <tr>
+                    <th>参数名</th>
+                    <th>说明</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>timeRange</td>
+                    <td>时间范围：week/month/year</td>
+                    <td>month</td>
+                </tr>
+                <tr>
+                    <td>date</td>
+                    <td>时间戳（可选）</td>
+                    <td>1678900000000</td>
+                </tr>
+                <tr>
+                    <td>type</td>
+                    <td>类型：1-支出，2-收入（可选）</td>
+                    <td>1</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+    <section id="classify">
+        <h2>分类相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/classifies</span>
+            <div class="description">创建分类</div>
+            <pre>{
+      "label": "餐饮",
+      "type": "1",        // 1-支出，2-收入
+      "icon": "/icons/food.png",
+      "color_icon": "/icons/food-color.png"
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/classifies</span>
+            <div class="description">获取分类列表</div>
+        </div>
+    
+        <div class="api-item">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint">/api/classifies/:id</span>
+            <div class="description">删除分类（软删除）</div>
+        </div>
+    </section>
+    
+    <section id="tag">
+        <h2>标签相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/tags</span>
+            <div class="description">创建标签</div>
+            <pre>{
+      "classify_id": 1,
+      "name": "午餐"    // 不超过4个中文字符
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/tags</span>
+            <div class="description">获取标签列表</div>
+            <p>参数：</p>
+            <table>
+                <tr>
+                    <th>参数名</th>
+                    <th>说明</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>classify_id</td>
+                    <td>分类ID（可选）</td>
+                    <td>1</td>
+                </tr>
+            </table>
+        </div>
+    
+        <div class="api-item">
+            <span class="method put">PUT</span>
+            <span class="endpoint">/api/tags/:id</span>
+            <div class="description">更新标签</div>
+            <pre>{
+      "name": "晚餐"
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint">/api/tags/:id</span>
+            <div class="description">删除标签</div>
+        </div>
+    </section>
+    
+    <section id="budget">
+        <h2>预算相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/budgets</span>
+            <div class="description">创建预算</div>
+            <pre>{
+      "type": "1",        // 1-月预算，2-年预算
+      "amount": 3000,
+      "classify_id": 1,   // 可选，为空表示总预算
+      "user_id": 1
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/budgets</span>
+            <div class="description">获取预算列表</div>
+            <p>参数：</p>
+            <table>
+                <tr>
+                    <th>参数名</th>
+                    <th>说明</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>user_id</td>
+                    <td>用户ID</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>type</td>
+                    <td>预算类型（可选）</td>
+                    <td>1</td>
+                </tr>
+            </table>
+        </div>
+    
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/budgets/usage</span>
+            <div class="description">获取预算使用情况</div>
+            <p>参数：</p>
+            <table>
+                <tr>
+                    <th>参数名</th>
+                    <th>说明</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>user_id</td>
+                    <td>用户ID</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>type</td>
+                    <td>预算类型</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>date</td>
+                    <td>时间戳</td>
+                    <td>1679900000000</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+    
+    <section id="assets">
+        <h2>资产相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/assets-accounts</span>
+            <div class="description">创建资产账户</div>
+            <pre>{
+      "name": "现金账户",
+      "type": "1",        // 1-正资产，2-负资产
+      "remark": "日常现金",
+      "icon": "/icons/cash.png",
+      "parent_id": null   // 可选，父账户ID
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/assets</span>
+            <div class="description">创建资产</div>
+            <pre>{
+      "assets_account_id": 1,
+      "user_id": 1,
+      "amount": 10000.00,
+      "name": "工商银行储蓄卡",
+      "remark": "工资卡"
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/assets</span>
+            <div class="description">获取资产列表</div>
+            <p>参数：</p>
+            <table>
+                <tr>
+                    <th>参数名</th>
+                    <th>说明</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>user_id</td>
+                    <td>用户ID</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>assets_account_id</td>
+                    <td>资产账户ID（可选）</td>
+                    <td>1</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+    
+    <section id="message">
+        <h2>消息相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/messages</span>
+            <div class="description">创建消息</div>
+            <pre>{
+      "message": "系统维护通知",
+      "send_time": "2024-03-20T14:00:00.000Z"  // 可选，默认当前时间
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/messages</span>
+            <div class="description">获取消息列表</div>
+            <p>参数：</p>
+            <table>
+                <tr>
+                    <th>参数名</th>
+                    <th>说明</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>user_id</td>
+                    <td>用户ID</td>
+                    <td>1</td>
+                </tr>
+            </table>
+        </div>
+    
+        <div class="api-item">
+            <span class="method put">PUT</span>
+            <span class="endpoint">/api/messages/:id/read</span>
+            <div class="description">标记消息为已读</div>
+            <pre>{
+      "user_id": 1
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method put">PUT</span>
+            <span class="endpoint">/api/messages/read-all</span>
+            <div class="description">批量标记消息为已读</div>
+            <pre>{
+      "user_id": 1
+    }</pre>
+        </div>
+    
+        <div class="api-item">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint">/api/messages/:id</span>
+            <div class="description">删除消息</div>
+        </div>
+    </section>
+    <section id="upload">
+        <h2>文件上传接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/upload/single</span>
+            <div class="description">上传单个图片</div>
+            <p>请求格式：multipart/form-data</p>
+            <p>参数名：image</p>
+            <p>支持格式：jpg, jpeg, png</p>
+            <p>大小限制：5MB</p>
+        </div>
+
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/upload/multiple</span>
+            <div class="description">上传多个图片（最多5张）</div>
+            <p>请求格式：multipart/form-data</p>
+            <p>参数名：images</p>
+            <p>支持格式：jpg, jpeg, png</p>
+            <p>大小限制：每张5MB</p>
+        </div>
+    </section>
+
+    <section id="admin">
+        <h2>管理员相关接口</h2>
+        
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/auth/login</span>
+            <div class="description">管理员登录</div>
+            <pre>{
+  "name": "admin",
+  "password": "123456"
+}
+
+响应：
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "admin",
+    "level": 2,
+    "status": 1,
+    "last_login": "2024-03-20T10:00:00.000Z",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}</pre>
+        </div>
+
+        <div class="api-item">
+            <span class="method post">POST</span>
+            <span class="endpoint">/api/auth</span>
+            <div class="description">创建管理员（需要超级管理员权限）</div>
+            <pre>{
+  "name": "manager",
+  "password": "123456",
+  "level": 1    // 1-普通管理员，2-超级管理员
+}</pre>
+        </div>
+
+        <div class="api-item">
+            <span class="method get">GET</span>
+            <span class="endpoint">/api/auth</span>
+            <div class="description">获取管理员列表</div>
+            <p>需要在请求头中添加 token：</p>
+            <pre>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</pre>
+        </div>
+
+        <div class="api-item">
+            <span class="method put">PUT</span>
+            <span class="endpoint">/api/auth/:id/status</span>
+            <div class="description">更新管理员状态</div>
+            <pre>{
+  "status": 0    // 0-禁用，1-正常
+}</pre>
+        </div>
+
+        <div class="api-item">
+            <span class="method put">PUT</span>
+            <span class="endpoint">/api/auth/:id/password</span>
+            <div class="description">修改管理员密码</div>
+            <pre>{
+  "oldPassword": "123456",
+  "newPassword": "654321"
+}</pre>
+        </div>
+    </section>
+
+    <section id="errors">
+        <h2>错误处理</h2>
+        <div class="api-item">
+            <h3>错误响应格式</h3>
+            <pre>{
+  "success": false,
+  "message": "错误信息"
+}</pre>
+            <table>
+                <tr>
+                    <th>状态码</th>
+                    <th>说明</th>
+                    <th>示例消息</th>
+                </tr>
+                <tr>
+                    <td>400</td>
+                    <td>请求参数错误</td>
+                    <td>"标签名不能超过4个中文字符"</td>
+                </tr>
+                <tr>
+                    <td>401</td>
+                    <td>未授权或 token 无效</td>
+                    <td>"未提供token" 或 "token无效或已过期"</td>
+                </tr>
+                <tr>
+                    <td>404</td>
+                    <td>资源不存在</td>
+                    <td>"账单不存在"</td>
+                </tr>
+                <tr>
+                    <td>500</td>
+                    <td>服务器内部错误</td>
+                    <td>"服务器错误"</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- 其他接口文档... -->
+
+</body>
+</html> 
